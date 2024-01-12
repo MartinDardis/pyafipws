@@ -133,14 +133,14 @@ def sign_tra(tra, cert=CERT, privatekey=PRIVATEKEY, passphrase=""):
             # NOTE: workaround if certificate is not already stored in a file
             # SECURITY WARNING: the private key will be exposed a bit in /tmp
             #                   (in theory only for the current user)
-            if cert.startswith("-----BEGIN CERTIFICATE-----"):
+            if cert.startswith("-----BEGIN"):
                 cert_f = NamedTemporaryFile()
                 cert_f.write(cert.encode('utf-8'))
                 cert_f.flush()
                 cert = cert_f.name
             else:
                 cert_f = None
-            if privatekey.startswith("-----BEGIN RSA PRIVATE KEY-----"):
+            if privatekey.startswith("-----BEGIN"):
                 key_f = NamedTemporaryFile()
                 key_f.write(privatekey.encode('utf-8'))
                 key_f.flush()
