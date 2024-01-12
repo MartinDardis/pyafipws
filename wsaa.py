@@ -160,7 +160,7 @@ def sign_tra(tra, cert=CERT, privatekey=PRIVATEKEY, passphrase=""):
                     cert_f.close()
                 if key_f:
                     key_f.close()
-            return b64encode(out).decode("utf8")
+            return b64encode(out)   # This is commented because i guess broke base64 encoding .decode("utf8")
         except OSError as e:
             if e.errno == 2:
                 warnings.warn("El ejecutable de OpenSSL no esta disponible en el PATH")
