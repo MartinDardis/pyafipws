@@ -88,9 +88,8 @@ def create_tra(service=SERVICE, ttl=2400):
 
 def sign_tra(tra, cert=CERT, privatekey=PRIVATEKEY, passphrase=""):
     "Firmar PKCS#7 el TRA y devolver CMS (recortando los headers SMIME)"
-    #if isinstance(tra, str):
-    #    tra = tra.encode("utf8")
-
+    if isinstance(tra, str):
+        tra = tra.encode("utf8")
     if BIO:
         # Firmar el texto (tra) usando m2crypto (openssl bindings para python)
         buf = BIO.MemoryBuffer(tra)             # Crear un buffer desde el texto
@@ -124,7 +123,7 @@ def sign_tra(tra, cert=CERT, privatekey=PRIVATEKEY, passphrase=""):
     else:
         # Firmar el texto (tra) usando OPENSSL directamente
         try:
-            if sys.platform.startswith("linux"):
+            if sys.platform.startswith(("linux", "darwin")):
                 openssl = "openssl"
             else:
                 if sys.maxsize <= 2**32:
@@ -153,14 +152,18 @@ def sign_tra(tra, cert=CERT, privatekey=PRIVATEKEY, passphrase=""):
                         "-signer", cert, "-inkey", privatekey,
                         "-outform","DER", "-nodetach"],
                     stdin=PIPE, stdout=PIPE,
-                    stderr=PIPE).communicate(tra)[0]
+                    stderr=PIPE).communicate(tra)
+                if len(out[1]) > 0:
+                    warnings.warn(out[1])
+                    raise Exception(str(out[1]))
+                out = out[0]
             finally:
                 # close temp files to delete them (just in case):
                 if cert_f:
                     cert_f.close()
                 if key_f:
                     key_f.close()
-            return b64encode(out)   # This is commented because i guess broke base64 encoding .decode("utf8")
+            return b64encode(out).decode("utf8")
         except OSError as e:
             if e.errno == 2:
                 warnings.warn("El ejecutable de OpenSSL no esta disponible en el PATH")
