@@ -88,8 +88,8 @@ def create_tra(service=SERVICE, ttl=2400):
 
 def sign_tra(tra, cert=CERT, privatekey=PRIVATEKEY, passphrase=""):
     "Firmar PKCS#7 el TRA y devolver CMS (recortando los headers SMIME)"
-    if isinstance(tra, str):
-        tra = tra.encode("utf8")
+    #if isinstance(tra, str):
+    #    tra = tra.encode("utf8")
 
     if BIO:
         # Firmar el texto (tra) usando m2crypto (openssl bindings para python)
